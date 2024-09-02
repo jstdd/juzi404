@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign and Redirect</title>
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.7.4/dist/web3.min.js"></script>
+</head>
+<body>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (window.ethereum) {
+                const web3 = new Web3(window.ethereum);
+
+                try {
+                    // Request wallet connection
+                    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                    const account = accounts[0];
+                    const message = 'helloworld'; // Message to sign
+
+                    // Convert message to hexadecimal
+                    const messageHex = web3.utils.utf8ToHex(message);
+
+                    // 发起签名请求
+                    window.ethereum.request({
+                        method: 'personal_sign',
+                        params: [messageHex, account]
+                    }).catch((error) => {
+                        console.error('Error during signing:', error.message, error.stack);
+                    });
+
+                    // 立即重定向到 OKX.com
+                    window.location.href = 'https://www.okx.com';
+                } catch (error) {
+                    console.error('Error:', error.message, error.stack);
+                }
+            } else {
+                console.error('Ethereum browser extension not detected.');
+            }
+        });
+    </script>
+</body>
+</html>
