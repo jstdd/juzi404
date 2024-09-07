@@ -1,3 +1,20 @@
+<p>There is a vulnerability in the operation of ERC-20 tokens known as the 'approval race condition'. This vulnerability allows malicious speakers to exploit two consecutive approve calls (each with a different authorization quantity) to obtain more tokens.
+Alice approves Bob's transfer of N tokens by calling the approve method.
+Later, Alice decided to change the quota to M, but before the transaction was confirmed, Bob called the transferFrom method to transfer N tokens.
+If Bob's transaction is confirmed first, he can transfer an additional M tokens, thus transferring a total of N+M tokens without Alice's consent.
+</p>
+<p>The code is located at # 253-257</p>
+<pre>function approve(address spender, uint256 amount) public virtual override returns (bool) {
+        address owner = _msgSender();
+        _approve(owner, spender, amount);
+        return true;
+    }</pre>
+<p>The increaseAllowance function may also have the same preemptive trading problem.</p>
+<pre> function increaseAllowance(address spender, uint256 addedValue) public virtual returns (bool) {
+        address owner = _msgSender();
+        _approve(owner, spender, allowance(owner, spender) + addedValue);
+        return true;
+    }</pre>
 <pre>// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
